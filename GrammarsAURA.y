@@ -1,6 +1,6 @@
 {
-module Parser where
-import Lexer
+module GrammarsAURA where
+import AURALex
 }
 
 %name parseExpr
