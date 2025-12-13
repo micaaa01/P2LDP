@@ -32,14 +32,12 @@ tokens :-
   fn                              { \p s -> TFn }
   true                            { \p s -> TBool True }
   false                           { \p s -> TBool False }
-  sqrt                            { \p s -> TSqrt }
 
   -- Operadores aritméticos
   \+                              { \p s -> TPlus }
   \-                              { \p s -> TMinus }
   \*                              { \p s -> TStar }
   \/                              { \p s -> TSlash }
-  \^                              { \p s -> TPower }
 
   -- Comparación
   "<="                            { \p s -> TLessEq }
@@ -70,12 +68,10 @@ tokens :-
 data Token
   = TNumber Double
   | TBool Bool
-  | TId String
   | TLet | TIn
   | TIf | TThen | TElse
   | TFn | TArrow
   | TPlus | TMinus | TStar | TSlash | TPower
-  | TSqrt
   | TLess | TGreater | TLessEq | TGreaterEq
   | TEq | TNotEq
   | TAnd | TOr | TNot
