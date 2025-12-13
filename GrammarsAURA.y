@@ -10,13 +10,16 @@ import AURALex
 %token
   int     { TokenInt $$ }
   bool    { TokenBool $$ }
-  '+'     { TokenPlus }
+  '+'     { TokenAdd }
+  '-'     { TokenSub }
   '*'     { TokenMul }
+  '/'     { TokenDiv }
   if      { TokenIf }
   then    { TokenThen }
   else    { TokenElse }
   '('     { TokenLParen }
   ')'     { TokenRParen }
+
 
 %%
 
