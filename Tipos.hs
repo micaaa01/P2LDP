@@ -106,3 +106,17 @@ bind a t
     | a `Set.member` ftv t   = error $ "Choque: " ++ a ++ " en " ++ show t
     | otherwise              = return (Map.singleton a t)
 
+-- Instanciación 
+instantiate :: Scheme -> Infer Type
+instantiate (Forall vars t) = do
+    freshVars <- mapM(const fresh) vars
+    let s = Map.fromList(zip vars freshVars)
+    return (apply s t)
+
+
+--Generalización
+generalize :: TypeEnv -> Type -> Scheme
+generalize env t =
+    Forall vars t
+    where
+        vars = Set.toList (ftv t `Set.difference` ftv env)
