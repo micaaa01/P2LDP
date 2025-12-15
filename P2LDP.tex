@@ -1,0 +1,934 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[spanish]{babel}   
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}    
+\usepackage{lmodern}
+\usepackage[most]{tcolorbox}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage{forest}
+\usepackage{mathpartir}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{cite}
+\usepackage{bussproofs}
+\usepackage{mathpartir}
+
+
+
+
+\tcbset{colback=black!10!white, colframe=black!80!black, boxrule=0.8pt, arc=3mm}
+
+
+\usepackage{amsmath, amssymb} 
+\usepackage{graphicx}         
+\usepackage{hyperref}         
+\usepackage{geometry}         
+\geometry{margin=2.5cm}
+
+
+
+\begin{document}
+\begin{titlepage}
+    \centering
+    {\Large \textbf{Universidad Nacional Autónoma de México} \par}
+    \vspace{0.5cm}
+    {\large Facultad de Ciencias \par}
+    \vspace{0.5cm}
+    {\large Lenguajes de Programación \par}
+
+    \vfill
+
+    {\Huge \textbf{Proyecto 2: \\
+    Inferencia lógica y sistemas de tipos}
+
+  
+    \begin{flushleft}
+    \textbf{Integrantes:}
+    \end{flushleft}
+    
+    \begin{center}
+    Elizalde Maza Jesús Eduardo \\
+    Navarro Fierro Michelle Alanis \\
+    Peredo López Citlalli Abigail \\
+    \end{center}
+
+    \vfill
+
+    {\large Profesor: Manuel Soto Romero \par}
+    \vspace{0.5cm}
+    \begin{center}
+        Diego Méndez Medina\\
+        José Alejandro Pérez Márquez\\
+        Erick Daniel Arroyo Martínez\\
+        Mauro Emiliano Chávez Zamora\\
+    \end{center}
+    {\large Fecha: \today \par}
+    \vspace{0.5cm}
+    {\large CDMX \par}
+\end{titlepage}
+
+% --- Página con el índice ---
+\newpage
+\tableofcontents
+\newpage  % Para que el contenido empiece en la siguiente página
+
+
+\section{Introducción}
+
+El estudio de los lenguajes de programación ha estado siempre acompañado por la necesidad de establecer mecanismos formales que permitan describir, controlar y verificar el comportamiento de los programas. Entre estos mecanismos, los sistemas de tipos han adquirido un papel central, pues proporcionan una estructura rigurosa para clasificar expresiones y garantizar que operen de manera coherente. La \textit{inferencia de tipos}, entendida como la capacidad de un sistema o compilador para deducir automáticamente el tipo de una expresión, ha sido fundamental para el desarrollo tanto teórico como práctico de los lenguajes modernos.
+
+Históricamente, la inferencia de tipos surgió de la intersección entre la teoría de lenguajes y la lógica matemática. Desde los primeros trabajos de Curry, Church y Turing en la década de 1930, la relación entre funciones, tipos y proposiciones comenzó a tomar forma\cite{pierce,hinman}.Más tarde, durante los años sesenta y setenta, investigaciones como las de Hindley y Milner consolidaron sistemas de inferencia que permitieron diseñar lenguajes expresivos y seguros sin exigir anotaciones de tipos exhaustivas. Paralelamente, los avances en la lógica de predicados de primer orden ofrecieron un marco formal para razonar sobre la validez de enunciados, convirtiéndose en una herramienta fundamental en la verificación y en la semántica formal.
+
+La conexión entre estos campos no es accidental: los sistemas de tipos pueden interpretarse como sistemas lógicos, y los procesos de inferencia de tipos comparten estructuras con los mecanismos de inferencia lógica en sistemas formales. Esta relación ha dado lugar a principios que han guiado el diseño de lenguajes modernos, permitiendo que conceptos provenientes de la lógica se traduzcan en herramientas prácticas como la verificación automática, la prevención de errores en tiempo de ejecución y la creación de lenguajes más robustos y expresivos.
+
+Comprender la historia y el trasfondo lógico de la inferencia de tipos no sólo ofrece una visión más profunda de los lenguajes de programación actuales, sino que también permite apreciar cómo los fundamentos teóricos continúan influyendo en su evolución. La relevancia de este tema radica en que constituye un puente entre la teoría matemática y la ingeniería de software, revelando cómo los métodos formales han moldeado, y continúan moldeando, la manera en que construimos y razonamos sobre programas.\cite{pierce,harper}
+
+
+
+\newpage
+\section{Objetivos}
+
+Este proyecto tiene como objetivo general responder la pregunta central: \emph{¿Qué relación existe entre los sistemas de tipos y la inferencia lógica en sistemas formales de primer orden?} Para abordar esta cuestión, se propone el lenguaje AURA el cual busca establecer un puente conceptual que permita comprender de manera rigurosa cómo los sistemas de tipos pueden interpretarse como mecanismos de comprobación lógica, donde cada expresión del programa funciona como una proposición y cada tipo como una propiedad que debe ser demostrada. A partir de esta perspectiva, se pretende mostrar cómo la inferencia de tipos realizada por los compiladores se fundamenta en principios lógicos capaces de derivar, verificar y garantizar la validez formal de las expresiones del lenguaje.
+
+Con base en este objetivo general, el proyecto se plantea los siguientes objetivos específicos:
+
+\begin{itemize}
+    \item Explicar el papel de los sistemas de tipos en la estructura y seguridad de los lenguajes de programación, destacando su relevancia para el control de errores y la verificación anticipada.
+    
+    \item Describir los fundamentos de la inferencia lógica en sistemas formales de primer orden y su importancia en el razonamiento matemático y computacional.
+    
+    \item Analizar de manera conceptual cómo la inferencia de tipos se corresponde con procesos de deducción lógica, mostrando los paralelos entre reglas de tipado y reglas de inferencia lógica.
+    
+    \item Identificar los beneficios prácticos y teóricos que surgen al comprender esta relación, especialmente en el diseño de lenguajes modernos, la construcción de compiladores robustos y el desarrollo de herramientas de verificación formal.
+    
+    \item Proporcionar un marco integrador que permita entender por qué nociones como tipificación estática, inferencia automática y pruebas formales no son elementos independientes, sino manifestaciones de un mismo fundamento lógico.
+\end{itemize}
+
+Al alcanzar estos objetivos, el proyecto busca no sólo responder la pregunta planteada, sino también ofrecer una comprensión más profunda de la conexión entre teoría matemática y práctica de programación. De este modo, se pretende resaltar la importancia de dicha relación para el diseño disciplinado, seguro y confiable de software en la ingeniería computacional contemporánea.
+
+
+\newpage
+\section{Marco Teórico}
+\subsection{Sistemas de Tipos}
+
+Un sistema de tipos consiste en un conjunto de reglas de inferencia que establecen restricciones sobre cómo se pueden construir los programas. Mediante los tipos, se determina la clasificación de las expresiones del lenguaje, indicando de qué manera pueden combinarse entre sí. De manera intuitiva, el tipo de una expresión permite anticipar la naturaleza de su resultado: por ejemplo, si se suman dos expresiones numéricas, el resultado también deberá ser numérico. Por el contrario, intentar sumar un valor numérico con uno booleano, como en \texttt{true + 7}, debe considerarse inválido porque provoca un error de tipos.
+
+En términos generales, un tipo puede entenderse como una descripción abstracta de un conjunto de valores posibles. Aunque esta idea funciona en casos simples ---como tipos representando números enteros o valores flotantes--- no resulta adecuada cuando se trata de tipos más complejos, como los tipos de funciones o los tipos polimórficos. En realidad, la interpretación formal de los tipos suele basarse en estructuras matemáticas como los órdenes parciales, especialmente dentro del marco de la semántica denotacional.
+
+La incorporación de un sistema de tipos en el diseño de un lenguaje de programación proporciona diversas ventajas:
+
+\begin{itemize}
+    \item Permite detectar errores de programación en etapas tempranas.
+    \item Aporta seguridad, ya que un programa bien tipado evita fallos de ejecución relacionados con tipos.
+    \item Facilita la abstracción, fundamental para definir interfaces.
+    \item Ayuda a documentar el código de forma más clara y manejable que los comentarios.
+    \item Contribuye a una implementación del lenguaje más eficiente y ordenada
+    \cite{UNAMMaterial,pierce}
+\end{itemize}
+
+
+\subsection{Importancia de los Sistemas de Tipos}
+
+Los sistemas de tipos desempeñan un papel fundamental en el diseño y funcionamiento de los lenguajes de programación. Su objetivo principal es garantizar que los valores se usen correctamente dentro de un programa, evitando errores y mejorando la calidad del software.
+
+\begin{itemize}
+    \item {Seguridad y corrección}
+\end{itemize}
+Un programa bien tipado no se detiene inesperadamente por errores de tipo, lo que asegura un comportamiento correcto durante su ejecución.
+
+
+La seguridad en los sistemas de tipos vincula la semántica estática con la semántica dinámica, y su demostración suele dividirse en dos propiedades principales:
+
+\begin{itemize}
+    \item \textbf{Progreso:} Todo programa que cumple con las reglas de tipado puede continuar evaluándose sin quedar bloqueado.
+    \item \textbf{Preservación:} Si un programa bien tipado avanza en su evaluación, la expresión resultante también mantiene un tipo válido; en muchos casos, conserva exactamente el mismo tipo.
+\end{itemize}
+
+\begin{itemize}
+    \item {Prevención de errores en compilación}
+\end{itemize}
+Los sistemas de tipos permiten detectar fallos antes de ejecutar el programa, reduciendo los \textit{bugs} y proporcionando una descripción formal del lenguaje.
+
+\begin{itemize}
+    \item {Documentación implícita}
+\end{itemize}
+Los tipos sirven como guía para entender el código, facilitando el mantenimiento y la productividad del desarrollador sin necesidad de comentarios adicionales.
+
+\begin{itemize}
+    \item {Optimización del compilador}
+\end{itemize}
+La información de tipos habilita generación de código más eficiente, al eliminar comprobaciones innecesarias en tiempo de ejecución.
+
+\begin{itemize}
+    \item {Soporte al desarrollo a gran escala}
+\end{itemize}
+Al definir interfaces claras y minimizar dependencias, los sistemas de tipos permiten la colaboración organizada entre múltiples desarrolladores. \cite{harper, UNAMMaterial, milner}
+
+\subsection{Correspondencia de Curry--Howard}
+
+La correspondencia de Curry--Howard es una relación profunda y explícita entre los sistemas de lógica formal (demostraciones matemáticas) y los sistemas formales de computación (programas). En esta relación, las proposiciones lógicas se interpretan como tipos en un sistema de tipado; las pruebas de esas proposiciones como programas (o términos); y la demostración como la construcción de un valor del tipo correspondiente.
+
+Más formalmente, según esta correspondencia:\cite{Cornell,AcademiaLab}
+
+\subsection*{A nivel de fórmulas y tipos}
+La relación con la lógica de primer orden aparece mediante el siguiente paralelismo:
+
+\begin{itemize}
+    \item Tipos polimórficos $\;\leftrightarrow\;$ cuantificación universal $(\forall)$.
+    \item Variables de tipo $\;\leftrightarrow\;$ variables lógicas.
+    \item Instanciación de tipos $\;\leftrightarrow\;$ eliminación de cuantificadores.
+\end{itemize}
+
+\noindent\textbf{Ejemplo:}
+
+\[
+\forall \alpha.\ \alpha \rightarrow \alpha
+\]
+
+corresponde al tipo de la función identidad, análogo a una fórmula universal en lógica de primer orden.
+\cite{AcademiaLab,HarvardCS}
+
+
+\subsection*{A nivel de demostraciones y programas}
+Proveer una prueba de una proposición equivale a definir un programa de un tipo determinado: las reglas de introducción y eliminación de los conectivos se interpretan como operaciones de construcción y deconstrucción de valores en el sistema de tipos (por ejemplo, abstracción y aplicación en el cálculo lambda).
+
+\medskip
+
+En síntesis: \textbf{una prueba es un programa; una proposición es un tipo}.\cite{HarvardCS,Byorgey}
+
+\subsubsection{Importancia de la Correspondencia de Curry--Howard}
+
+La correspondencia de Curry--Howard no es una mera curiosidad matemática o filosófica; tiene consecuencias fundamentales para la lógica, la teoría de la computación y el diseño de lenguajes de programación. Entre sus implicaciones más destacadas:
+
+\begin{itemize}
+    \item \textbf{Puente entre lógica y computación / programas verificados.}
+    Permite garantizar correctitud por construcción: si un programa pasa la verificación de tipos, entonces existe una prueba válida de su corrección.
+    
+    \item \textbf{Fundamento de lenguajes funcionales y teoría de tipos.}
+    Conceptos como tipos algebraicos, polimorfismo y tipos dependientes encuentran su base en principios lógicos.
+    
+    \item \textbf{Soporte a la verificación formal y asistentes de prueba.}
+    Con tipado dependiente, las proposiciones pueden representarse como tipos y las pruebas como programas certificados.
+    
+    \item \textbf{Unificación de lógica intuicionista y cálculo lambda.}
+    Los sistemas de tipos pueden verse como sistemas lógicos; los programas, como pruebas construidas mediante cálculo lambda.
+\end{itemize}
+
+Por estas razones, la correspondencia de Curry--Howard se considera un pilar conceptual en la teoría de la computación, la semántica de lenguajes y la verificación formal.\cite{Byorgey,AcademiaLab}
+
+\subsubsection{Relación con los lenguajes de programación}
+
+
+
+Este enfoque influye fuertemente en el diseño de sistemas de tipos avanzados, en la inferencia automática de tipos (como en Haskell), y en lenguajes destinados a la formalización matemática de programas, pues en este caso la correspondencia de Curry--Howard proporciona un fundamento teórico sólido con consecuencias prácticas: lenguajes más seguros, sistemas de tipos más expresivos y la posibilidad de verificar formalmente propiedades de programas. 
+
+Podemos verlo como que las proposiciones lógicas corresponden a tipos, y las pruebas de esas proposiciones corresponden a programas.
+
+Esta correspondencia se expresa en el siguiente paralelismo:
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Lógica} & \textbf{Lenguajes de programación} \\
+\hline
+Proposición & Tipo \\
+Prueba & Programa \\
+Demostración válida & Programa bien tipado \\
+Eliminación / introducción & Aplicación / abstracción \\
+\hline
+\end{tabular}
+\end{center}
+
+Así, escribir un programa bien tipado equivale a construir una demostración de una proposición lógica.\cite{RecurseType,hinman}
+
+
+\subsection{Juicios de tipado como inferencias lógicas}
+
+En un lenguaje de programación tipado, el objeto central no es el programa en sí, sino el \emph{juicio de tipado}. Este se escribe como:
+
+\[
+\Gamma \vdash e : \tau
+\]
+
+y se lee:
+
+\begin{quote}
+``Bajo el contexto $\Gamma$, la expresión $e$ tiene tipo $\tau$''.
+\end{quote}
+
+Aquí:
+\begin{itemize}
+    \item $\Gamma$ es un contexto que asigna tipos a variables libres,
+    \item $e$ es una expresión del lenguaje,
+    \item $\tau$ es un tipo.
+\end{itemize}
+
+Esto no es simplemente una notación elegante para decorar documentos: es lógica pura. Tiene exactamente la misma forma que un juicio de deducción en un sistema formal.\cite{RecurseType,Stimsina}
+
+\subsubsection*{Analogía directa con la lógica}
+
+En lógica proposicional o de primer orden, un juicio típico es:
+
+\[
+\Gamma \vdash \varphi
+\]
+
+lo cual significa:
+
+\begin{quote}
+``$\varphi$ es deducible a partir de las hipótesis $\Gamma$''.
+\end{quote}
+
+Bajo la correspondencia de Curry--Howard se establece el siguiente paralelismo:
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Lógica} & \textbf{Tipos} \\
+\hline
+Hipótesis & Variables tipadas \\
+Proposición & Tipo \\
+Prueba & Término \\
+Deducción & Derivación de tipado \\
+\hline
+\end{tabular}
+\end{center}
+
+El contexto de tipos $\Gamma$ cumple el mismo papel que el conjunto de suposiciones lógicas.
+
+\subsubsection*{Reglas de tipado como reglas de inferencia}
+
+Un sistema de tipos se define mediante reglas, escritas como reglas de inferencia lógica. Un ejemplo clásico es la regla de \emph{aplicación de funciones}:
+
+\[
+\frac{
+    \Gamma \vdash f : \tau_1 \rightarrow \tau_2
+    \qquad
+    \Gamma \vdash x : \tau_1
+}{
+    \Gamma \vdash f\,x : \tau_2
+}
+\]
+
+Esta regla es estructuralmente idéntica a una regla lógica como el \emph{modus ponens}:
+
+\[
+\frac{
+    \Gamma \vdash \varphi \rightarrow \psi
+    \qquad
+    \Gamma \vdash \varphi
+}{
+    \Gamma \vdash \psi
+}
+\]
+
+El patrón es exactamente el mismo. La única diferencia es que, en el sistema de tipos, las ``proposiciones'' reciben el nombre de tipos.\cite{UNAMMaterial,AcademiaLab,RecurseType}
+
+\subsubsection*{Derivaciones de tipado como árboles de prueba}
+
+Un programa bien tipado no es solamente una expresión correcta: es una prueba completa. Dicha prueba puede representarse como un árbol de derivación, de manera análoga a los árboles de prueba en lógica formal.
+
+Por ejemplo, en el cálculo lambda tipado, cada término bien tipado corresponde a un árbol de inferencia que justifica formalmente su tipo.
+
+
+En lo que sigue, se introduce un lenguaje de expresiones aritméticas y booleanas, y se analiza detalladamente su semántica formal,tanto estática como dinámica, empleando las herramientas matemáticas previamente descritas.\cite{harper, UNAMMaterial}
+
+\[
+\frac{
+    \Gamma, x : \tau_1 \vdash x : \tau_1
+}{
+    \Gamma \vdash \lambda x.\,x : \tau_1 \rightarrow \tau_1
+}
+\;(\textsc{var})
+\]
+
+Esto constituye una demostración formal de que $\lambda x.\,x$ tiene tipo $\tau_1 \rightarrow \tau_1$. No es nada distinto de una prueba lógica construida paso a paso.
+
+Si el compilador no puede construir este árbol de derivación, entonces el programa no es demostrable. El juicio falla.\cite{RecurseType}
+
+\subsubsection*{Introducción y eliminación: la simetría lógica}
+
+Cada constructor del lenguaje posee dos caras lógicas, correspondientes a reglas de introducción y eliminación:
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Lenguaje} & \textbf{Lógica} \\
+\hline
+Abstracción $\lambda x.\, e$ & Introducción de implicación \\
+Aplicación $f\,x$ & Eliminación de implicación \\
+Par $(e_1, e_2)$ & Introducción de conjunción \\
+Proyecciones $\mathit{fst}, \mathit{snd}$ & Eliminación de conjunción \\
+\texttt{case} / \texttt{match} & Eliminación de disyunción \\
+\hline
+\end{tabular}
+\end{center}
+
+Esta la razón por la cual el lenguaje \emph{tiene sentido}.
+
+\section{Lenguaje AURA}
+
+El lenguaje \textbf{AURA} se propone como un lenguaje diseñado para ilustrar la relación entre los sistemas de tipos y la inferencia lógica en sistemas formales de primer orden. Su propósito es ofrecer un marco simplificado en el cual se puedan observar de manera clara los principios teóricos que sustentan la inferencia de tipos \cite{pierce,milner}.
+
+\subsection{Motivación}
+La creación de AURA responde a la necesidad de contar con un entorno controlado que permita demostrar cómo las reglas de tipado pueden interpretarse como reglas de inferencia lógica \cite{hinman}. Al definir un lenguaje mínimo, se facilita la exposición de conceptos como la correspondencia Curry--Howard \cite{pierce,harper} y la aplicación del algoritmo W \cite{milner,BernsteinType}, evitando la complejidad de otros lenguajes.
+
+\subsection{Sintaxis básica}
+AURA se construye sobre una sintaxis inspirada en el cálculo $\lambda$ \cite{UNAMMaterial}, con las siguientes expresiones fundamentales:
+
+\begin{itemize}
+    \item \textbf{Variables:} $x, y, z$
+    \item \textbf{Abstracción:} $\lambda x. e$ (función que recibe un argumento $x$ y devuelve la expresión $e$)
+    \item \textbf{Aplicación:} $(e_1 \ e_2)$ (aplicación de la función $e_1$ al argumento $e_2$)
+    \item \textbf{Constantes básicas:} números enteros ($0, 1, 2, \dots$) y booleanos (\texttt{true}, \texttt{false})
+\end{itemize}
+
+Ejemplos de expresiones en AURA:
+\begin{itemize}
+    \item $\lambda x. x$ \hfill (función identidad)
+    \item $\lambda x. \lambda y. x$ \hfill (función que ignora su segundo argumento)
+    \item $(\lambda x. x) (\lambda y. y)$ \hfill (aplicación de la identidad a otra identidad)
+\end{itemize}
+
+\subsection{Sistema de tipos}
+El sistema de tipos de AURA se basa en el sistema Hindley--Milner \cite{milner,HindleyWikipedia,Microsoft2016}, que permite inferencia polimórfica. Los tipos básicos incluyen:
+
+\begin{itemize}
+    \item \texttt{Int} (enteros)
+    \item \texttt{Bool} (booleanos)
+    \item Tipos de función: $\tau_1 \rightarrow \tau_2$
+    \item Variables de tipo: $\alpha, \beta, \gamma, \dots$
+\end{itemize}
+
+Ejemplo de tipado:
+\begin{itemize}
+    \item $\lambda x. x \quad \Rightarrow \quad \alpha \rightarrow \alpha$
+    \item $\lambda x. \lambda y. x \quad \Rightarrow \quad \alpha \rightarrow \beta \rightarrow \alpha$
+    \item $(\lambda x. x) (\lambda y. y) \quad \Rightarrow \quad \gamma \rightarrow \gamma$
+\end{itemize}
+
+\subsection{Relación con la lógica}
+Cada regla de tipado en AURA puede interpretarse como una regla de inferencia lógica \cite{hinman,type-systems-logic}:
+\begin{itemize}
+    \item La \textbf{abstracción} corresponde a la introducción de la implicación en lógica.
+    \item La \textbf{aplicación} corresponde al modus ponens.
+    \item Las \textbf{variables de tipo} representan cuantificadores universales en lógica de primer orden.
+\end{itemize}
+
+De esta manera, AURA se convierte en un lenguaje que materializa la correspondencia Curry--Howard \cite{pierce,harper}, mostrando cómo los programas son pruebas y los tipos son proposiciones.
+
+
+
+\subsection{Correspondencia de Curry-Howard en AURA}
+
+Anteriormente ya hemos hablado de la correspondencia de Curry-Howard y su importancia en la lógica y en los lenguajes de programación. Ahora veamoslo de una forma un poco más concreta, abordando más su aplicación a nuestro lenguaje AURA, pues esto es escencial como  fundamento sustento teórico de nuestro trabajo.
+
+El isomorfismo de Curry--Howard establece una correspondencia profunda entre tipos, lógica y teoría de categorías:
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Tipos} & \textbf{Lógica} & \textbf{Categorías} \\
+\hline
+$A \rightarrow B$ & Implicación & Exponencial \\
+$A \times B$ & Conjunción & Producto \\
+$A + B$ & Disyunción & Coproducto \\
+$\forall a.\,\tau$ & Universal & Límite / Fin \\
+$\exists a.\,\tau$ & Existencial & Colímite / Cofin \\
+\hline
+\end{tabular}
+\end{center}
+
+\medskip
+
+En \textsc{AURA}:
+
+\begin{itemize}
+    \item Un programa bien tipado es una prueba constructiva.
+    \item Ejecutar un programa equivale a simplificar una prueba.
+    \item Un error de tipo corresponde a una prueba inválida.
+\end{itemize}
+
+\section{Algoritmo W}
+
+\subsubsection{Descripción general}
+El \textbf{algoritmo W} es el procedimiento clásico para realizar inferencia de tipos dentro del sistema Hindley--Milner \cite{milner}. Propuesto por Luis Damas y Robin Milner en 1982, este algoritmo permite obtener automáticamente el tipo más general de una expresión sin requerir anotaciones de tipo explícitas. Su impacto ha sido decisivo en el diseño de lenguajes funcionales como Haskell y la familia ML, al ofrecer una combinación efectiva entre tipado estático seguro y una sintaxis flexible.
+
+\subsubsection{El algoritmo en el sistema Hindley--Milner}
+El sistema Hindley--Milner se caracteriza por soportar polimorfismo paramétrico y por garantizar que toda expresión bien formada posea un \textit{tipo principal}. Dicho tipo principal es el más general posible, de modo que cualquier otro tipo admisible puede obtenerse mediante instanciación \cite{pierce}. En este marco, el algoritmo W actúa como el método operativo que calcula ese tipo de manera sistemática, preservando tanto la corrección como la completitud del sistema de tipos \cite{harper}.
+
+\subsubsection{Mecanismo de operación}
+El algoritmo W trabaja esencialmente en tres etapas:
+
+\begin{enumerate}
+    \item \textbf{Generación de restricciones:} Se examina la estructura de la expresión y se producen ecuaciones que describen cómo deben relacionarse los tipos de sus subexpresiones.
+    \item \textbf{Unificación:} Las restricciones generadas se resuelven mediante unificación, encontrando sustituciones para las variables de tipo que satisfacen todas las ecuaciones simultáneamente.
+    \item \textbf{Obtención del tipo principal:} Aplicadas las sustituciones, se obtiene el tipo final de la expresión. Este tipo puede contener variables polimórficas si la expresión lo permite. \cite{milner}
+\end{enumerate}
+
+Si la expresión es tipable, el algoritmo produce el tipo más general posible. En caso contrario, indica la presencia de un error de tipos.
+
+\subsubsection{Correspondencia lógica}
+El algoritmo W puede interpretarse también desde la lógica de primer orden, pues sus pasos reflejan reglas de inferencia lógicas:
+
+\begin{itemize}
+    \item La \textbf{abstracción} ($\lambda x.e$) corresponde a la regla de \textit{introducción de la implicación}: asumir que $x$ tiene tipo $\alpha$ para concluir que $e$ tiene tipo $\beta$ permite obtener $\alpha \rightarrow \beta$.
+    \item La \textbf{aplicación} $(e_1 \ e_2)$ se relaciona con la regla de \textit{modus ponens}: a partir de una función de tipo $\alpha \rightarrow \beta$ y un argumento de tipo $\alpha$, se deduce un resultado de tipo $\beta$.
+    \item La construcción \textbf{let} se vincula con la \textit{generalización} o cuantificación universal, que permite definir expresiones con tipos polimórficos reutilizables mediante instanciación.
+\end{itemize}
+
+En suma, el algoritmo W no solo es un procedimiento de inferencia, sino una expresión concreta de la correspondencia Curry--Howard \cite{harper}, donde determinar el tipo de un programa equivale a construir una prueba en un sistema lógico.
+
+\subsection{El algortimo W en AURA}
+El algoritmo \textit{W} puede entenderse como un procedimiento de búsqueda de pruebas
+en un sistema de inferencia de tipos. Cada constructor del lenguaje corresponde a una
+regla de inferencia, y la unificación resuelve las ecuaciones generadas por dichas reglas.
+
+Por ejemplo:
+
+\begin{itemize}
+  \item \textbf{Variables}: usan $\forall$-eliminación (instanciación).
+  \item \textbf{Abstracciones $\lambda$}: introducen supuestos en el entorno.
+  \item \textbf{Aplicaciones}: generan ecuaciones de tipos que son resueltas por
+        unificación.
+  \item \textbf{Let}: combina $\forall$-introducción (generalización) y
+        $\forall$-eliminación.
+\end{itemize}
+
+De esta manera, la inferencia de tipos se reduce a un problema de inferencia lógica
+sobre ecuaciones de primer orden, donde el unificador más general garantiza la
+maximalidad del tipo inferido.
+
+
+\section{Componentes clave del algoritmo W}
+
+\subsection{Sustituciones (\textit{Subst})}
+
+Las sustituciones son funciones parciales de variables de tipo a tipos:
+
+\begin{verbatim}
+type Subst = Map.Map TVar Type
+\end{verbatim}
+
+
+Corresponden a instanciaciones en lógica. Cuando se unifica $a$ con \texttt{Int}, se establece que en todas las fórmulas donde aparece $a$, debe reemplazarse por \texttt{Int}.
+
+\paragraph{Composición de sustituciones.}
+
+\begin{verbatim}
+compose s1 s2 = Map.map (apply s1) s2 `Map.union` s1
+\end{verbatim}
+
+Esto refleja la composición de transformaciones: aplicar $s_2$ y luego $s_1$ es equivalente a aplicar $\texttt{compose } s_1\ s_2$.
+
+\subsection{Unificación}
+
+La unificación constituye el núcleo algorítmico del sistema:
+
+\begin{verbatim}
+unify :: Type -> Type -> Infer Subst
+\end{verbatim}
+
+
+La unificación resuelve ecuaciones de tipos. Por ejemplo, al escribir:
+
+\begin{verbatim}
+f x = x + 1
+\end{verbatim}
+
+el algoritmo genera las siguientes restricciones:
+\begin{itemize}
+    \item $x : a$ (variable fresca),
+    \item $(+): \texttt{Int} \rightarrow \texttt{Int} \rightarrow \texttt{Int}$,
+\end{itemize}
+por lo tanto $a = \texttt{Int}$.
+
+La unificación encuentra el \emph{unificador más general} (mgu), es decir, la sustitución mínima que hace iguales dos tipos.
+
+\paragraph{Reglas de unificación (análogas a lógica de primer orden).}
+
+\begin{itemize}
+    \item \textbf{Constantes:} $\texttt{Int} \sim \texttt{Int} \Rightarrow \emptyset$.
+    \item \textbf{Variables:} $a \sim \tau \Rightarrow [a \mapsto \tau]$ si $a \notin \text{ftv}(\tau)$.
+    \item \textbf{Funciones:}
+    \[
+    (\tau_1 \rightarrow \tau_2) \sim (\sigma_1 \rightarrow \sigma_2)
+    \Rightarrow
+    \text{compose}(\text{unify }\tau_1\ \sigma_1)(\text{unify }\tau_2\ \sigma_2).
+    \]
+\end{itemize}
+
+\subsection{Variables frescas}
+
+\begin{verbatim}
+fresh :: Infer Type
+fresh = do
+  i <- get
+  put (i + 1)
+  return (TVar ("a" ++ show i))
+\end{verbatim}
+
+
+Corresponden a variables libres en lógica. Cada variable fresca evita colisiones de nombres, de manera análoga a la conversión $\alpha$ en el cálculo lambda.
+\subsection{Instanciación}
+
+La instanciación elimina cuantificadores universales de un esquema de tipos,
+reemplazando cada variable cuantificada por una variable de tipo fresca.
+
+\begin{verbatim}
+instantiate :: Scheme -> Infer Type
+\end{verbatim}
+
+Si se tiene el esquema:
+\[
+\forall a_1 \dots a_n.\; \tau
+\]
+la instanciación produce un tipo $\tau'$ donde cada $a_i$ es reemplazada por una
+variable de tipo fresca distinta.
+
+La instanciación corresponde a la regla de eliminación del cuantificador universal
+($\forall$-eliminación) en lógica de predicados:
+\[
+\frac{\forall x.\; P(x)}{P(t)}
+\]
+
+En el contexto de inferencia de tipos, esta regla permite usar una función polimórfica
+con tipos concretos distintos en cada uso, evitando dependencias entre aplicaciones
+independientes.
+
+\subsection{Generalización}
+
+La generalización introduce cuantificadores universales sobre aquellas variables de
+tipo que no aparecen libres en el entorno de tipos.
+
+\begin{verbatim}
+generalize :: TypeEnv -> Type -> Scheme
+\end{verbatim}
+
+Formalmente, si $\Gamma$ es el entorno y $\tau$ el tipo inferido:
+\[
+\text{generalize}(\Gamma, \tau) = \forall \alpha_1 \dots \alpha_n.\; \tau
+\]
+
+donde:
+\[
+\{\alpha_1, \dots, \alpha_n\} = FV(\tau) - FV(\Gamma)
+\]
+
+
+
+Este proceso implementa la regla de introducción del cuantificador universal
+($\forall$-introducción):
+\[
+\frac{\Gamma \vdash e : \tau \qquad \alpha \notin FV(\Gamma)}
+     {\Gamma \vdash e : \forall \alpha.\; \tau}
+\]
+
+La generalización se aplica exclusivamente en construcciones \texttt{let}, lo que
+permite definir funciones polimórficas reutilizables sin comprometer la consistencia
+del sistema de tipos.
+
+\subsection{Entornos de tipos}
+
+El entorno de tipos mantiene la asociación entre variables del lenguaje y sus esquemas
+de tipo:
+
+\begin{verbatim}
+type TypeEnv = Map.Map String Scheme
+\end{verbatim}
+
+
+El entorno $\Gamma$ corresponde a un conjunto de hipótesis en un sistema de deducción:
+\[
+\Gamma = \{ x_1 : \sigma_1, \dots, x_n : \sigma_n \}
+\]
+
+Cada juicio de tipos tiene la forma:
+\[
+\Gamma \vdash e : \tau
+\]
+
+Durante la inferencia, el entorno se extiende al introducir variables ligadas
+(\texttt{lambda}, \texttt{let}) y se transforma al aplicar sustituciones, preservando
+la coherencia de las hipótesis.
+
+
+
+\section{Reglas de inferencia del algoritmo W}
+
+\subsection{Variables (\textsc{VAR})}
+
+\[
+\frac{
+x : \sigma \in \Gamma \qquad \tau = \text{instantiate}(\sigma)
+}{
+\Gamma \vdash x : \tau
+}
+\]
+
+\paragraph{Implementación.}
+
+\begin{verbatim}
+EVar x -> do
+  case Map.lookup x env of
+    Nothing -> error $ "Variable no ligada: " ++ x
+    Just scheme -> do
+      t <- instantiate scheme
+      return (nullSubst, t)
+\end{verbatim}
+
+
+Instanciar un esquema es análogo a usar un axioma en una prueba lógica.
+
+\subsection{Literales (\textsc{LIT})}
+
+\[
+\Gamma \vdash n : \texttt{Int}
+\qquad\qquad
+\Gamma \vdash b : \texttt{Bool}
+\]
+
+\paragraph{Implementación.}
+
+\begin{verbatim}
+ENum _  -> return (nullSubst, TInt)
+EBool _ -> return (nullSubst, TBool)
+\end{verbatim}
+
+Los literales actúan como axiomas con tipos conocidos.
+
+\subsection{Abstracción lambda (\textsc{ABS})}
+
+\[
+\frac{
+\Gamma, x : \alpha \vdash e : \tau \qquad (\alpha\ \text{fresca})
+}{
+\Gamma \vdash \lambda x.e : \alpha \rightarrow \tau
+}
+\]
+
+\paragraph{Implementación.}
+
+\begin{verbatim}
+ELam x body -> do
+  tv <- fresh
+  let env' = Map.insert x (Forall [] tv) env
+  (s1, t1) <- infer env' body
+  return (s1, TFun (apply s1 tv) t1)
+\end{verbatim}
+
+Corresponde a la introducción de la implicación $(\rightarrow I)$.
+
+\subsection{Aplicación (\textsc{APP})}
+
+\[
+\frac{
+\Gamma \vdash e_1 : \tau_1
+\quad
+\Gamma \vdash e_2 : \tau_2
+\quad
+\tau_1 \sim \tau_2 \rightarrow \alpha
+}{
+\Gamma \vdash e_1\,e_2 : \alpha
+}
+\]
+
+\paragraph{Implementación.}
+
+\begin{verbatim}
+EApp e1 e2 -> do
+  (s1, t1) <- infer env e1
+  (s2, t2) <- infer (apply s1 env) e2
+  tv <- fresh
+  s3 <- unify (apply s2 t1) (TFun t2 tv)
+  return (compose s3 (compose s2 s1), apply s3 tv)
+\end{verbatim}
+
+
+Equivale al \emph{modus ponens} $(\rightarrow E)$.
+
+\subsection{Let polimórfico (\textsc{LET})}
+
+\[
+\frac{
+\Gamma \vdash e_1 : \tau_1
+\quad
+\sigma = \text{Gen}(\Gamma, \tau_1)
+\quad
+\Gamma, x : \sigma \vdash e_2 : \tau_2
+}{
+\Gamma \vdash \texttt{let } x = e_1 \texttt{ in } e_2 : \tau_2
+}
+\]
+
+\paragraph{Implementación.}
+
+\begin{verbatim}
+ELet x e1 e2 -> do
+  (s1, t1) <- infer env e1
+  let env' = apply s1 env
+      scheme = generalize env' t1
+      env'' = Map.insert x scheme env'
+  (s2, t2) <- infer env'' e2
+  return (compose s2 s1, t2)
+\end{verbatim}
+
+
+Implementa la generalización universal $(\forall I)$.
+
+\section{Generalización e instanciación}
+
+\subsection{Generalización}
+
+\begin{verbatim}
+generalize :: TypeEnv -> Type -> Scheme
+generalize env t =
+  Forall vars t
+  where
+    vars = Set.toList (ftv t `Set.difference` ftv env)
+\end{verbatim}
+
+Corresponde a la cuantificación universal sobre variables libres.
+
+\subsection{Instanciación}
+
+\begin{verbatim}
+instantiate :: Scheme -> Infer Type
+instantiate (Forall vars t) = do
+  freshVars <- mapM (const fresh) vars
+  let s = Map.fromList (zip vars freshVars)
+  return (apply s t)
+\end{verbatim}
+
+Equivale a la eliminación del cuantificador universal $(\forall E)$.
+
+\subsubsection{Propiedades del algoritmo W}
+\textbf{Corrección}
+
+Si $W(\Gamma, e) = (S, \tau)$, entonces $S(\Gamma) \vdash e : S(\tau)$ es derivable.
+
+\textbf{Completitud}
+
+Si existe una derivación $\Gamma \vdash e : \tau$, entonces el algoritmo W termina exitosamente.
+
+\textbf{Tipo principal}
+
+El tipo inferido es el más general posible.  
+Por ejemplo:
+\[
+\lambda x.x : \forall a.\ a \rightarrow a
+\]
+
+
+
+
+\newpage
+\section{Conclusiones y resultados}
+
+En el presente proyecto se estudió e implementó el algoritmo W como mecanismo de inferencia de tipos para un lenguaje funcional mínimo, con soporte para enteros, booleanos, abstracciones lambda, aplicación de funciones y expresiones \texttt{let}. A través de este desarrollo se demostró que, aun en lenguajes pequeños, la inferencia de tipos constituye una herramienta poderosa tanto desde el punto de vista teórico como práctico, al permitir razonar formalmente sobre los programas sin requerir anotaciones explícitas por parte del programador.
+
+Uno de los principales aportes del trabajo es la interpretación de la inferencia de tipos como un proceso de inferencia lógica. Los juicios de tipado se analizaron como fórmulas dentro de un sistema formal, mientras que la unificación se entendió como un procedimiento para resolver ecuaciones de primer orden. Bajo esta perspectiva, el sistema de tipos deja de verse únicamente como un mecanismo de detección de errores y pasa a concebirse como un sistema de razonamiento formal automatizado.
+
+El sistema implementado se fundamenta en el esquema de Hindley--Milner, incorporando conceptos esenciales como sustituciones, variables de tipo frescas, esquemas de tipo, instanciación y generalización. Estos mecanismos permitieron inferir tipos polimórficos de forma automática, decidible y correcta, evidenciando la importancia del polimorfismo paramétrico en el diseño de lenguajes funcionales modernos. En particular, se mostró que la generalización e instanciación corresponden directamente a la introducción y eliminación del cuantificador universal en la lógica de predicados, reforzando la relación entre sistemas de tipos y lógica formal.
+
+Asimismo, el análisis de las propiedades del algoritmo W confirmó su solidez teórica. Se discutieron las propiedades de corrección, completitud y existencia de tipo principal, mostrando que el algoritmo no solo produce tipos válidos cuando termina exitosamente, sino que además genera el tipo más general posible para cada expresión. Estas propiedades son fundamentales para garantizar la consistencia del sistema de tipos y su utilidad práctica en compiladores e intérpretes reales.
+
+No obstante, también se identificaron las limitaciones inherentes al sistema Hindley--Milner. En particular, el algoritmo W no soporta polimorfismo de rango superior, subtipado ni tipos dependientes, lo que restringe su expresividad frente a sistemas de tipos más avanzados. Estas limitaciones no invalidan su relevancia, pero sí delimitan claramente el alcance del modelo implementado.
+
+Por otro lado, una limitación adicional del proyecto es que el lenguaje desarrollado depende de Haskell como lenguaje anfitrión, tanto a nivel de implementación como de semántica subyacente. Si bien esta elección facilitó el desarrollo y permitió concentrarse en el estudio del algoritmo W y del sistema de tipos, una posible mejora futura sería diseñar el lenguaje de manera independiente, con una semántica operacional y un sistema de tipos completamente propios. No obstante, se reconoce que avanzar en esta dirección implica un estudio más riguroso y profundo de temas como semántica formal, diseño de lenguajes y construcción de compiladores, lo cual representa un desafío considerable. Aun así, lograr esta independencia sería altamente beneficioso, ya que permitiría una comprensión más completa del lenguaje y una evaluación más precisa de las decisiones de diseño tomadas.
+
+A partir de este trabajo, se abren diversas líneas de mejora y trabajo futuro. Entre las extensiones más naturales al lenguaje se encuentran la incorporación de tipos algebraicos, clases de tipos y tipos existenciales, lo cual permitiría modelar estructuras de datos más complejas y patrones de abstracción más ricos. Asimismo, la inclusión de mecanismos para el manejo de efectos, por ejemplo mediante mónadas, ampliaría el lenguaje hacia escenarios más cercanos a lenguajes funcionales de uso real.
+
+Desde un punto de vista más teórico, una posible extensión relevante sería el estudio de sistemas de tipos más expresivos, como aquellos con polimorfismo de rango superior o tipos dependientes. Esto permitiría profundizar aún más en la relación entre la lógica de predicados y los lenguajes de programación, así como en la correspondencia de Curry--Howard en contextos más generales.
+
+En conclusión, este proyecto demuestra que la inferencia de tipos no solo es una técnica esencial en la implementación de lenguajes de programación, sino también un puente conceptual profundo entre la lógica y la computación. El algoritmo W ejemplifica cómo es posible automatizar la construcción de pruebas dentro de un sistema formal, reafirmando la relevancia de los sistemas de tipos como una herramienta central en el diseño y análisis de lenguajes de programación modernos.
+
+
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{pierce}
+B.~C. Pierce.
+\textit{Types and Programming Languages}.
+MIT Press, 2002.
+
+\bibitem{hinman}
+P. Hinman.
+\textit{Fundamentals of Mathematical Logic}.
+A K Peters, 2005.
+
+\bibitem{milner}
+R. Milner.
+\textit{A Theory of Type Polymorphism in Programming}.
+Journal of Computer and System Sciences, 1978.
+
+\bibitem{harper}
+R. Harper.
+\textit{Practical Foundations for Programming Languages}.
+Cambridge University Press, 2012.
+
+\bibitem{UNAMMaterial}
+Universidad Nacional Autónoma de México, Facultad de Ciencias. (s. f.). \textit{Material de Lenguajes de Programación}. Recuperado de 
+\url{https://sites.google.com/ciencias.unam.mx/lengprog/material?authuser=0}
+
+\bibitem{type-systems-logic}
+Type systems and logic. (s. f.). \textit{Codewords Recurse}. Recuperado de:
+\url{https://codewords.recurse.com/issues/one/type-systems-and-logic}
+
+\bibitem{HindleyWikipedia}
+Wikipedia.  \textit{Hindley–Milner type system}. (s. f.). Recuperado de 
+\url{https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system}
+
+\bibitem{HMPart1}
+Stimsina. (s. f.). \textit{Implementing a Hindley-Milner type system — Part 1}. Recuperado de 
+\url{https://blog.stimsina.com/post/implementing-a-hindley-milner-type-system-part-1}
+
+\bibitem{BernsteinType}
+Bernsteinbear. (2024, 15 octubre).\textit{Damas-Hindley-Milner inference two ways}. Recuperado de 
+\url{https://bernsteinbear.com/blog/type-inference/}
+
+\bibitem{Bernstein}
+Bernstein, M. (2024, Octubre 15). \textit{Damas-Hindley-Milner inference two ways}. Recuperado de 
+\url{https://bernsteinbear.com/blog/type-inference/}
+
+\bibitem{Stimsina}
+Stimsina. (s. f.). \textit{Implementing a Hindley-Milner Type System (Part 1)}. Recuperado de 
+\url{https://blog.stimsina.com/post/implementing-a-hindley-milner-type-system-part-1}
+
+\bibitem{RecurseType}
+Recurse Center. (2020). \textit{Type systems and logic}. Codewords. Recuperado de \url{https://codewords.recurse.com/issues/one/type-systems-and-logic}
+
+\bibitem{HM_Wikipedia}
+Wikipedia. (s. f.). \textit{Hindley–Milner type system}. Recuperado de 
+\url{https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system}
+
+\bibitem{Byorgey}
+Byorgey, B. (2021, Septiembre 8). \textit{Implementing Hindley-Milner with the unification-fd library}. Recuperado de
+\url{https://byorgey.wordpress.com/2021/09/08/implementing-hindley-milner-with-the-unification-fd-library/}
+
+\bibitem{Microsoft2016}
+Microsoft Research. (2016). \textit{HMF: Hindley–Milner Type System}. Recuperado de\url{ https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/hmf.pdf}
+
+
+\bibitem{Cornell}
+Cornell University. (s. f.). \textit{The Curry-Howard Correspondence}. CS 3110 — Data Structures and Functional Programming. Recuperado de 
+\url{https://courses.cs.cornell.edu/cs3110/2021sp/textbook/adv/curry-howard.html :contentReference[oaicite:0]{index=0}}
+
+\bibitem{AcademiaLab}
+Academia-Lab. (s. f.). \textit{Correspondencia Curry-Howard}. Recuperado de \url{https://academia-lab.com/enciclopedia/correspondencia-curry-howard/ } 
+
+\bibitem{HarvardCS}
+Harvard School of Engineering and Applied Sciences. (2021, Marzo 18). \textit{Curry-Howard Isomorphism; Existential types} (Lecture 16). Recuperado de
+\url{https://courses.seas.harvard.edu/courses/cs152/2024sp/lectures/lec15-curryhoward.pdf :contentReference[oaicite:1]{index=1}}
+
+
+
+\end{thebibliography}
+
+
+
+\end{document}
