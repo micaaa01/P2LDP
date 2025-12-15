@@ -1,7 +1,7 @@
 {
 module GrammarsAURA where
 
-import Lexer (Token(..), AlexPosn(..))
+import AURALex (Token(..), AlexPosn(..))
 import AST
 }
 
@@ -19,8 +19,10 @@ import AST
 %token
     -- Literales
     number      { TNumber $$ }
+    id          { TId $$ }
     true        { TBool True }
     false       { TBool False }
+  
     
     -- Palabras clave
     let         { TLet }
@@ -62,8 +64,7 @@ import AST
 %left '&&'
 %left '+' '-'
 %left '*' '/'
-%right '^'
-%nonassoc NEG NOT SQRT    -- Operadores unarios
+%nonassoc NEG NOT         -- Operadores unarios
 %left APP                 -- Aplicación de función
 
 %%
@@ -114,25 +115,18 @@ AdditiveExpr
 -- Nivel 6: Multiplicación y división (*, /)
 MultiplicativeExpr :: { Expr }
 MultiplicativeExpr
-    : MultiplicativeExpr '*' PowerExpr  { EBinOp Mul $1 $3 }
-    | MultiplicativeExpr '/' PowerExpr  { EBinOp Div $1 $3 }
-    | PowerExpr                         { $1 }
-
--- Nivel 7: Potencia (^) - asociativa a la derecha
-PowerExpr :: { Expr }
-PowerExpr
-    : UnaryExpr '^' PowerExpr           { EBinOp Pow $1 $3 }
+    : MultiplicativeExpr '*' UnaryExpr  { EBinOp Mul $1 $3 }
+    | MultiplicativeExpr '/' UnaryExpr  { EBinOp Div $1 $3 }
     | UnaryExpr                         { $1 }
 
--- Nivel 8: Operadores unarios (-, !, sqrt)
+-- Nivel 7: Operadores unarios (-, !)
 UnaryExpr :: { Expr }
 UnaryExpr
     : '-' UnaryExpr  %prec NEG          { EUnOp Neg $2 }
     | '!' UnaryExpr  %prec NOT          { EUnOp Not $2 }
-    | sqrt UnaryExpr %prec SQRT         { EUnOp Sqrt $2 }
     | ApplicationExpr                   { $1 }
 
--- Nivel 9: Aplicación de función (mayor precedencia)
+-- Nivel 8: Aplicación de función (mayor precedencia)
 ApplicationExpr :: { Expr }
 ApplicationExpr
     : ApplicationExpr AtomicExpr %prec APP { EApp $1 $2 }

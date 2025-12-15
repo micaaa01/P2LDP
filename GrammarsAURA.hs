@@ -10,7 +10,7 @@
 {-# LANGUAGE PartialTypeSignatures #-}
 module GrammarsAURA where
 
-import Lexer (Token(..), AlexPosn(..))
+import AURALex (Token(..), AlexPosn(..))
 import AST
 import qualified Control.Monad as Happy_Prelude
 import qualified Data.Bool as Happy_Prelude

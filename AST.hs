@@ -24,4 +24,5 @@ data Expr
   | EBool Bool
   | EBinOp BinOp Expr Expr
   | EUnOp UnOp Expr
+  | EIf Expr Expr Expr
   deriving (Eq, Show)

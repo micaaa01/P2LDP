@@ -66,12 +66,13 @@ tokens :-
 
 {
 data Token
-  = TNumber Double
+  = TNumber Int
   | TBool Bool
+  | TId String
   | TLet | TIn
   | TIf | TThen | TElse
   | TFn | TArrow
-  | TPlus | TMinus | TStar | TSlash | TPower
+  | TPlus | TMinus | TStar | TSlash
   | TLess | TGreater | TLessEq | TGreaterEq
   | TEq | TNotEq
   | TAnd | TOr | TNot

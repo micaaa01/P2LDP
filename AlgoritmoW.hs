@@ -196,6 +196,6 @@ showInferredType expr =
 -- |Función para verificar si una expresión tiene un tipo específico
 hasType :: TypeEnv -> Expr -> Type -> Bool
 hasType env expr expectedType =
-    let inferredType = inferType env expr
-        (subst, _) = runInfer (unify inferredType expectedType)
-    in not (null subst) || inferredType == expectedType
+  let inferredType = inferType env expr
+  in inferredType == expectedType
+
